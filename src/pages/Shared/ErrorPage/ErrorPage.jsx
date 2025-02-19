@@ -7,7 +7,7 @@ const ErrorPage = () => {
         <div className="hero min-h-screen">
             {/* Helmet */}
             <Helmet>
-                <title>Error Page | LearnHive</title>
+                <title>Error Page | </title>
             </Helmet>
             <div className="hero-content text-center">
                 <div className="max-w-md space-y-5">

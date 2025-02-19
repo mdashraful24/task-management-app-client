@@ -48,7 +48,7 @@ const Login = () => {
         <div className="pt-8 pb-20 mb-5 px-3">
             {/* Helmet */}
             <Helmet>
-                <title>Sign In | LearnHive</title>
+                <title>Sign In | </title>
             </Helmet>
 
             {/* title */}

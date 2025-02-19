@@ -7,9 +7,9 @@ const Footer = () => {
                 <footer className="container mx-auto text-base-content flex flex-col justify-center items-center -mt-3">
                     <div className="flex items-center gap-2 text-gray-300">
                         <img src={logo} alt="siteLogo" className="w-12" />
-                        <h2 className="text-3xl font-extrabold">LearnHive</h2>
+                        <h2 className="text-3xl font-extrabold"></h2>
                     </div>
-                    <p className="text-center text-gray-400">At LearnHive we help students with the essential study preparation they need to clear their exam and provide tutors with the performance they deserve.</p>
+                    <p className="text-center text-gray-400"></p>
                 </footer>
 
                 {/* 1 nav */}
@@ -29,7 +29,7 @@ const Footer = () => {
                     <a className="link link-hover text-base hover:text-blue-500" href="https://www.instagram.com/" target="_blank">Instagram</a>
                 </nav>
             </footer>
-            <p className="text-center text-gray-400 pt-10">&copy; {new Date().getFullYear()} LearnHive. All rights reserved.</p>
+            <p className="text-center text-gray-400 pt-10">&copy; {new Date().getFullYear()} . All rights reserved.</p>
             <p className="text-center text-gray-400">Designed, Developed and Maintained by Ashraful Islam</p>
         </div>
     );
