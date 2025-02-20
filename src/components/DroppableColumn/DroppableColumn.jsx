@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import TaskCard from "../TaskCard/TaskCard";
 
-const DroppableColumn = ({ category, tasks, onDelete, onEdit, onDrop }) => {
+const DroppableColumn = ({ category, tasks, onDelete, onEdit }) => {
     const { setNodeRef } = useDroppable({
         id: category,
     });

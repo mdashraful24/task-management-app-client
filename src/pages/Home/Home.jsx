@@ -8,7 +8,7 @@ const Home = () => {
     return (
         <div>
             <Helmet>
-                <title>Home | </title>
+                <title>Task Management Board | TaskFlow</title>
             </Helmet>
 
             <TaskBoard />

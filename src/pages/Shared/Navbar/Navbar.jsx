@@ -103,8 +103,8 @@ const Navbar = () => {
                             onClick={scrollToHome}
                             className="flex items-center gap-2"
                         >
-                            <img src={logo} alt="siteLogo" className="w-8 md:w-12" />
-                            <h2 className="block md:hidden lg:block text-lg md:text-3xl font-extrabold text-white"></h2>
+                            {/* <img src={logo} alt="siteLogo" className="w-8 md:w-12" /> */}
+                            <h2 className="text-2xl md:text-3xl font-extrabold text-white">TaskFlow</h2>
                         </button>
                     </div>
                 </div>

@@ -5,12 +5,30 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import DroppableColumn from "../DroppableColumn/DroppableColumn";
+import useAuth from "../../hooks/useAuth";
 
 const categories = ["To-Do", "In Progress", "Done"];
 
 const TaskBoard = () => {
+    const { user, loading } = useAuth();
     const axiosPublic = useAxiosPublic();
     const queryClient = useQueryClient();
+
+    if (loading) {
+        return (
+            <div className="flex min-h-screen justify-center items-center">
+                <div className="text-blue-700 loading loading-infinity loading-lg"></div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="flex min-h-screen justify-center items-center">
+                <p className="text-xl font-bold">You must be logged in to view and manage tasks.</p>
+            </div>
+        );
+    }
 
     const { register, handleSubmit, reset } = useForm();
     const { register: editRegister, handleSubmit: editHandleSubmit, setValue, reset: resetEditForm } = useForm();
@@ -19,9 +37,9 @@ const TaskBoard = () => {
     const [showForm, setShowForm] = useState(false);
 
     const { data: tasks = [], isLoading, isError } = useQuery({
-        queryKey: ["tasks"],
+        queryKey: ["tasks", user.email],
         queryFn: async () => {
-            const response = await axiosPublic.get("/tasks");
+            const response = await axiosPublic.get(`/tasks/${user.email}`);
             return response.data;
         },
     });
@@ -33,11 +51,11 @@ const TaskBoard = () => {
             reset();
             setShowForm(false);
             Swal.fire({
-                position: "top-end",
+                position: "top-center",
                 icon: "success",
                 title: "Your task has been saved",
                 showConfirmButton: false,
-                timer: 1500
+                timer: 1500,
             });
         },
     });
@@ -48,13 +66,13 @@ const TaskBoard = () => {
             queryClient.invalidateQueries(["tasks"]);
             setEditingTask(null);
             resetEditForm();
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Your task has been updated",
-                showConfirmButton: false,
-                timer: 1500
-            });
+            // Swal.fire({
+            //     position: "top-center",
+            //     icon: "success",
+            //     title: "Your task has been updated",
+            //     showConfirmButton: false,
+            //     timer: 1500,
+            // });
         },
     });
 
@@ -84,7 +102,8 @@ const TaskBoard = () => {
             alert("Task title is required!");
             return;
         }
-        addTaskMutation.mutate(newTask);
+        const taskWithEmail = { ...newTask, email: user.email };
+        addTaskMutation.mutate(taskWithEmail);
     };
 
     const handleDeleteTask = async (taskId) => {
@@ -95,7 +114,7 @@ const TaskBoard = () => {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Yes, delete it!",
         });
 
         if (result.isConfirmed) {
@@ -103,12 +122,11 @@ const TaskBoard = () => {
             Swal.fire({
                 title: "Deleted!",
                 text: "Your task has been deleted.",
-                icon: "success"
+                icon: "success",
             });
         }
     };
 
-    // Inside TaskBoard component
     const handleDragEnd = (event) => {
         const { active, over } = event;
         if (!over) return;
@@ -121,22 +139,41 @@ const TaskBoard = () => {
                 id: draggedTask._id,
                 updatedTask: { category: newCategory },
             });
+        } else {
+            const currentCategoryTasks = tasks.filter(
+                (task) => task.category === draggedTask.category
+            );
+
+            const draggedTaskIndex = currentCategoryTasks.findIndex(
+                (task) => task._id === draggedTask._id
+            );
+
+            currentCategoryTasks.splice(draggedTaskIndex, 1);
+            const newIndex = currentCategoryTasks.findIndex(
+                (task) => task._id === over.id
+            );
+            currentCategoryTasks.splice(newIndex, 0, draggedTask);
+
+            currentCategoryTasks.forEach((task, index) => {
+                editTaskMutation.mutate({
+                    id: task._id,
+                    updatedTask: { order: index + 1 },
+                });
+            });
         }
     };
 
+
     return (
         <div className="container mx-auto p-6 px-2.5">
-            {/* Page Title */}
             <h1 className="text-2xl md:text-4xl font-extrabold text-center mb-7">Task Management Board</h1>
 
-            {/* Show/Hide Task Form Button */}
             <div className="flex justify-center mb-8">
                 <button onClick={() => setShowForm(!showForm)} className="btn btn-primary">
                     {showForm ? "Hide Task Form" : "Add New Task"}
                 </button>
             </div>
 
-            {/* Task Form (Hidden by Default) */}
             {showForm && (
                 <form onSubmit={handleSubmit(handleAddTask)} className="mb-6 rounded">
                     <input
@@ -160,14 +197,15 @@ const TaskBoard = () => {
                 </form>
             )}
 
-            {/* Task Board with Drag-and-Drop */}
             <DndContext onDragEnd={handleDragEnd}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {categories.map((category) => (
                         <DroppableColumn
                             key={category}
                             category={category}
-                            tasks={tasks.filter((task) => task.category === category)}
+                            tasks={tasks
+                                .filter((task) => task.category === category)
+                                .sort((a, b) => a.order - b.order)}
                             onDelete={handleDeleteTask}
                             onEdit={handleOpenEditForm}
                         />
@@ -175,7 +213,6 @@ const TaskBoard = () => {
                 </div>
             </DndContext>
 
-            {/* Edit Task Modal */}
             {editingTask && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-2 overflow-y-auto">
                     <div className="bg-base-300 p-6 rounded-lg shadow-md w-96">
