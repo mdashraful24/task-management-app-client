@@ -16,13 +16,11 @@ const SocialLogin = () => {
             .then((result) => {
                 // console.log(result.user);
                 const userInfo = {
-                    email: result.user?.email,
-                    name: result.user?.displayName,
-                    image: result.user?.photoURL,
-                    phone: "888888",
-                    role: 'student',
-                    joinedDate: new Date().toISOString()
+                    id: result.user?.uid,  // User ID
+                    email: result.user?.email,  // Email
+                    name: result.user?.displayName  // Display Name
                 };
+                // console.log(userInfo);
                 axiosPublic.post('/users', userInfo)
                     .then(res => {
                         // console.log(res.data);
@@ -37,12 +35,12 @@ const SocialLogin = () => {
     };
 
     return (
-        <div className="text-center w-11/12 mx-auto">
+        <div className="text-center">
             <button
                 onClick={handleGoogleSignIn}
-                className="btn btn-outline w-full font-medium border-blue-600"
+                className="btn btn-sm bg-blue-900 hover:bg-blue-950 text-white hover:dark:text-white border-none"
             >
-                Sign in with Google
+                Sign In
             </button>
         </div>
     );

@@ -5,6 +5,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import DarkMode from '../DarkMode/DarkMode';
+import SocialLogin from '../../../components/SocialLogin/SocialLogin';
 
 const Navbar = () => {
     const { user, logOut } = useAuth();
@@ -53,11 +54,11 @@ const Navbar = () => {
 
     const links = (
         <>
-            <li>
+            {/* <li>
                 <NavLink to="/" onClick={() => setMenuOpen(false)}>
                     Home
                 </NavLink>
-            </li>
+            </li> */}
         </>
     );
 
@@ -69,7 +70,7 @@ const Navbar = () => {
                         <div
                             tabIndex={0}
                             role="button"
-                            className="btn btn-ghost md:hidden pl-0"
+                            className="btn btn-ghost hidden pl-0"
                             onClick={() => setMenuOpen(!menuOpen)}
                         >
                             <svg
@@ -142,12 +143,13 @@ const Navbar = () => {
                             )}
                         </div>
                     ) : (
-                        <Link
-                            to="/login"
-                                className="btn btn-sm bg-blue-900 hover:bg-blue-950 text-white hover:dark:text-white border-none"
-                        >
-                            Sign In
-                        </Link>
+                        // <Link
+                        //     to="/login"
+                        //         className="btn btn-sm bg-blue-900 hover:bg-blue-950 text-white hover:dark:text-white border-none"
+                        // >
+                        //     Sign In
+                        // </Link>
+                        <SocialLogin></SocialLogin>
                     )}
                 </div>
                 <div>
