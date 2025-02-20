@@ -105,7 +105,7 @@ const TaskCard = ({ task, onDelete, onEdit, handleCategoryChange }) => {
                     ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
                     : undefined,
             }}
-            className="bg-white p-4 rounded-lg shadow-md mb-4 max-w-full sm:max-w-md lg:max-w-lg"
+            className="bg-base-200 p-4 rounded-lg shadow-md hover:shadow-lg max-w-full sm:max-w-md lg:max-w-lg mt-4"
         >
             <div className="flex flex-row items-start justify-between gap-4 sm:gap-2">
                 <div className="flex-1 min-w-0">
@@ -140,7 +140,7 @@ const TaskCard = ({ task, onDelete, onEdit, handleCategoryChange }) => {
                 </div>
             </div>
 
-            <div className="mt-5 flex flex-wrap justify-between items-center gap-2">
+            {/* <div className="mt-5 flex flex-wrap justify-between items-center gap-2">
                 <button
                     onClick={() => handleCategoryChange("To-Do")}
                     className={`btn btn-sm w-full lg:w-32 ${task.category === "To-Do" ? "btn-primary" : "btn-secondary"}`}
@@ -159,7 +159,7 @@ const TaskCard = ({ task, onDelete, onEdit, handleCategoryChange }) => {
                 >
                     Done
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 };
