@@ -14,7 +14,7 @@ const TaskCard = ({ task, onDelete, onEdit, index }) => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className="bg-base-200 p-4 rounded-lg border shadow-md hover:shadow-lg max-w-full sm:max-w-md lg:max-w-lg mt-5"
+                    className="bg-base-200 p-4 rounded-lg border shadow-md hover:shadow-lg max-w-full sm:max-w-md lg:max-w-lg mt-4"
                 >
                     <div>
                         <div>
@@ -26,9 +26,11 @@ const TaskCard = ({ task, onDelete, onEdit, index }) => {
                                 <p>
                                     Created: {new Date(task.createdAt).toLocaleString()}
                                 </p>
-                                <p>
-                                    Last Updated: {new Date(task.updatedAt).toLocaleString()}
-                                </p>
+                                {task.updatedAt && (
+                                    <p>
+                                        Last Updated: {new Date(task.updatedAt).toLocaleString()}
+                                    </p>
+                                )}
                             </div>
                             <div className="flex flex-row justify-end items-center gap-2">
                                 <button
