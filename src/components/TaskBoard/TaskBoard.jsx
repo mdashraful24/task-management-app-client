@@ -15,6 +15,7 @@ const TaskBoard = () => {
     const axiosPublic = useAxiosPublic();
     const queryClient = useQueryClient();
 
+
     if (loading) {
         return (
             <div className="flex min-h-screen justify-center items-center">
@@ -36,6 +37,7 @@ const TaskBoard = () => {
 
     const [editingTask, setEditingTask] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [activityLog, setActivityLog] = useState([]);
 
     const { data: tasks = [], isLoading, isError } = useQuery({
         queryKey: ["tasks", user.email],
@@ -79,66 +81,11 @@ const TaskBoard = () => {
         setValue("description", task.description);
     };
 
-    // const handleEditTask = async (updatedTask) => {
-    //     if (!updatedTask.title.trim()) {
-    //         toast.success("Task title is required!", {
-    //             position: "top-right",
-    //         });
-    //         // alert("Task title is required!");
-    //         return;
-    //     }
-    //     editTaskMutation.mutate({ id: editingTask._id, updatedTask });
-    // };
 
-    // // final
-    // const handleEditTask = async (updatedTask) => {
-    //     if (!updatedTask.title.trim()) {
-    //         toast.success("Task title is required!", { position: "top-right" });
-    //         return;
-    //     }
-    //     editTaskMutation.mutate({
-    //         id: editingTask._id,
-    //         updatedTask: {
-    //             ...updatedTask,
-    //             updatedAt: new Date().toISOString() // Update time
-    //         }
-    //     });
-    // };
 
-    const handleEditTask = async (updatedTask) => {
-        if (!updatedTask.title.trim()) {
-            toast.success("Task title is required!", { position: "top-right" });
-            return;
-        }
-        editTaskMutation.mutate({
-            id: editingTask._id,
-            updatedTask: {
-                ...updatedTask,
-                updatedAt: new Date().toISOString() // Update time
-            }
-        });
-
-        // Show success message after task is updated
-        toast.success("Your task has been updated.", { position: "top-right" });
-    };
-
-    // const handleAddTask = async (newTask) => {
-    //     if (!newTask.title.trim()) {
-    //         alert("Task title is required!");
-    //         return;
-    //     }
-
-    //     const taskWithEmailAndOrder = {
-    //         ...newTask,
-    //         email: user.email,
-    //         order: tasks.length + 1,
-    //         category: "To-Do",
-    //     };
-    //     addTaskMutation.mutate(taskWithEmailAndOrder);
-    // };
     const handleAddTask = async (newTask) => {
         if (!newTask.title.trim()) {
-            alert("Task title is required!");
+            toast.error("Task title is required!", { position: "top-right" });
             return;
         }
 
@@ -147,9 +94,79 @@ const TaskBoard = () => {
             email: user.email,
             order: tasks.length + 1,
             category: "To-Do",
-            updatedAt: new Date().toISOString() // Store update time
+            updatedAt: new Date().toISOString(),
         };
+
+        // Log task creation
+        setActivityLog((prevLog) => [
+            ...prevLog,
+            {
+                message: `Task "${newTask.title}" created`,
+                timestamp: new Date().toLocaleString(),
+            },
+        ]);
+
         addTaskMutation.mutate(taskWithMetadata);
+    };
+
+    // const handleEditTask = async (updatedTask) => {
+    //     if (!updatedTask.title.trim()) {
+    //         toast.error("Task title is required!", { position: "top-right" });
+    //         return;
+    //     }
+
+    //     // Log task update
+    //     setActivityLog((prevLog) => [
+    //         ...prevLog,
+    //         {
+    //             message: `Task "${updatedTask.title}" updated`,
+    //             timestamp: new Date().toLocaleString(),
+    //         },
+    //     ]);
+
+    //     editTaskMutation.mutate({
+    //         id: editingTask._id,
+    //         updatedTask: {
+    //             ...updatedTask,
+    //             updatedAt: new Date().toISOString(),
+    //         },
+    //     });
+    //     toast.success("Your task has been updated.", { position: "top-right" });
+    // };
+
+    const handleEditTask = async (updatedTask) => {
+        if (!updatedTask.title.trim()) {
+            toast.error("Task title is required!", { position: "top-right" });
+            return;
+        }
+
+        // Check if any changes were made
+        if (
+            updatedTask.title === editingTask.title &&
+            updatedTask.description === editingTask.description
+        ) {
+            toast.error("No changes made to the task.", { position: "top-right" });
+            return;
+        }
+
+        // Log task update
+        setActivityLog((prevLog) => [
+            ...prevLog,
+            {
+                message: `Task "${updatedTask.title}" updated`,
+                timestamp: new Date().toLocaleString(),
+            },
+        ]);
+
+        editTaskMutation.mutate({
+            id: editingTask._id,
+            updatedTask: {
+                ...updatedTask,
+                updatedAt: new Date().toISOString(),
+            },
+        });
+
+        toast.success("Your task has been updated.", { position: "top-right" });
     };
 
 
@@ -165,6 +182,15 @@ const TaskBoard = () => {
         });
 
         if (result.isConfirmed) {
+            // Log task deletion
+            setActivityLog((prevLog) => [
+                ...prevLog,
+                {
+                    message: `Task "${taskId}" deleted`,
+                    timestamp: new Date().toLocaleString(),
+                },
+            ]);
+
             deleteTaskMutation.mutate(taskId);
             Swal.fire({
                 title: "Deleted!",
@@ -175,46 +201,6 @@ const TaskBoard = () => {
     };
 
 
-    // // Final
-    // const handleDragEnd = async (result) => {
-    //     const { destination, source, draggableId } = result;
-
-    //     if (!destination) return;
-    //     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
-
-    //     const draggedTask = tasks.find(task => task._id === draggableId);
-    //     const updatedTasks = [...tasks];
-
-    //     if (destination.droppableId !== source.droppableId) {
-    //         draggedTask.category = destination.droppableId;
-    //     }
-
-    //     // Sort and update orders
-    //     const categoryTasks = updatedTasks
-    //         .filter(task => task.category === draggedTask.category)
-    //         .sort((a, b) => a.order - b.order);
-
-    //     categoryTasks.splice(categoryTasks.findIndex(task => task._id === draggedTask._id), 1);
-    //     categoryTasks.splice(destination.index, 0, draggedTask);
-
-    //     categoryTasks.forEach((task, index) => {
-    //         task.order = index + 1;
-    //         task.updatedAt = new Date().toISOString(); // Update time
-    //     });
-
-    //     try {
-    //         await Promise.all(categoryTasks.map(task =>
-    //             editTaskMutation.mutateAsync({
-    //                 id: task._id,
-    //                 updatedTask: { order: task.order, category: task.category, updatedAt: task.updatedAt }
-    //             })
-    //         ));
-    //     } catch (error) {
-    //         queryClient.setQueryData(["tasks", user.email], tasks);
-    //         Swal.fire({ icon: "error", title: "Oops...", text: "Error updating task!" });
-    //     }
-    // };
-
     const handleDragEnd = async (result) => {
         const { destination, source, draggableId } = result;
 
@@ -224,8 +210,21 @@ const TaskBoard = () => {
         const draggedTask = tasks.find(task => task._id === draggableId);
         const updatedTasks = [...tasks];
 
+        // if (destination.droppableId !== source.droppableId) {
+        //     draggedTask.category = destination.droppableId;
+        // }
+
         if (destination.droppableId !== source.droppableId) {
             draggedTask.category = destination.droppableId;
+
+            // Log the task movement
+            setActivityLog((prevLog) => [
+                ...prevLog,
+                {
+                    message: `Task "${draggedTask.title}" moved to ${destination.droppableId}`,
+                    timestamp: new Date().toLocaleString(),
+                },
+            ]);
         }
 
         // Sort and update orders
@@ -253,7 +252,7 @@ const TaskBoard = () => {
             toast.success("Task dropped successfully.", { position: "top-right" });
         } catch (error) {
             queryClient.setQueryData(["tasks", user.email], tasks);
-            // Swal.fire({ icon: "error", title: "Oops...", text: "Error updating task!" });
+            Swal.fire({ icon: "error", title: "Oops...", text: "Error updating task!" });
         }
     };
 
@@ -323,10 +322,10 @@ const TaskBoard = () => {
 
             {editingTask && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-2 overflow-y-auto">
-                    <div className="bg-base-300 p-6 rounded-lg shadow-md w-96 border">
+                    <div className="bg-base-300 p-6 rounded-lg shadow-md container mx-auto border">
                         <h2 className="text-lg md:text-2xl font-semibold text-center mb-4">Edit Task</h2>
                         <form onSubmit={editHandleSubmit(handleEditTask)}>
-                            <label className="block mb-">Title</label>
+                            <label className="block mb-1.2">Title</label>
                             <input
                                 {...editRegister("title", {
                                     required: "Title is required",
@@ -335,12 +334,12 @@ const TaskBoard = () => {
                                         message: "Title cannot exceed 50 characters",
                                     },
                                 })}
-                                className="input input-bordered w-full mb-2"
+                                className="input input-bordered w-full mb-5"
                             />
                             {errors.title && (
                                 <p className="text-red-500 text-sm mb-2">{errors.title.message}</p>
                             )}
-                            <label className="block mb-">Description</label>
+                            <label className="block mb-1.5">Description</label>
                             <textarea
                                 {...editRegister("description", {
                                     maxLength: {
@@ -370,6 +369,26 @@ const TaskBoard = () => {
                     </div>
                 </div>
             )}
+
+            {/* Activity Log Section */}
+            {activityLog.length > 0 && (
+                <div className="mt-8">
+                    <h2 className="text-xl font-bold mb-2">Activity Log</h2>
+                    <div className="bg-base-200 p-4 rounded-lg">
+                        {activityLog.length > 0 ? (
+                            <ul className="space-y-2">
+                                {activityLog.map((log, index) => (
+                                    <li key={index} className="text-sm">
+                                        <span className="font-semibold">{log.timestamp}</span>: {log.message}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-center">No activity yet.</p>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -377,3 +396,5 @@ const TaskBoard = () => {
 export default TaskBoard;
 
 //
+
+

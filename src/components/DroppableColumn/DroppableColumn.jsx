@@ -10,7 +10,7 @@ const DroppableColumn = ({ category, tasks, onDelete, onEdit }) => {
                     {...provided.droppableProps}
                     className="flex flex-col bg-base-300 rounded-lg min-h-[100px] h-auto p-4"
                 >
-                    <h2 className="font-extrabold text-xl mb-1">{category}</h2>
+                    <h2 className="font-extrabold text-xl">{category}</h2>
                     <div className="flex-1">
                         {tasks.length > 0 ? (
                             tasks.map((task, index) => (
@@ -23,7 +23,10 @@ const DroppableColumn = ({ category, tasks, onDelete, onEdit }) => {
                                 />
                             ))
                         ) : (
-                            <div className="text-center py-4">No tasks in this column</div>
+                            // <div className="text-center py-4">No tasks in this column</div>
+                            <div className="flex h-full justify-center items-center text-center">
+                                <p>No tasks in this column</p>
+                            </div>
                         )}
                     </div>
                     {provided.placeholder}
