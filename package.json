@@ -46,6 +46,7 @@
     "react-router-dom": "^7.1.1",
     "react-simple-star-rating": "^5.1.7",
     "react-toastify": "^11.0.2",
+    "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.15.10"
   },
   "devDependencies": {
