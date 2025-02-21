@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
-import { DndContext } from "@dnd-kit/core";
+import { DragDropContext } from "@hello-pangea/dnd";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
@@ -66,13 +66,6 @@ const TaskBoard = () => {
             queryClient.invalidateQueries(["tasks"]);
             setEditingTask(null);
             resetEditForm();
-            // Swal.fire({
-            //     position: "top-center",
-            //     icon: "success",
-            //     title: "Your task has been updated",
-            //     showConfirmButton: false,
-            //     timer: 1500,
-            // });
         },
     });
 
@@ -102,8 +95,13 @@ const TaskBoard = () => {
             alert("Task title is required!");
             return;
         }
-        const taskWithEmail = { ...newTask, email: user.email };
-        addTaskMutation.mutate(taskWithEmail);
+
+        const taskWithEmailAndOrder = {
+            ...newTask,
+            email: user.email,
+            order: tasks.length + 1, // Assign a new order value
+        };
+        addTaskMutation.mutate(taskWithEmailAndOrder);
     };
 
     const handleDeleteTask = async (taskId) => {
@@ -127,42 +125,213 @@ const TaskBoard = () => {
         }
     };
 
-    const handleDragEnd = (event) => {
-        const { active, over } = event;
-        if (!over) return;
+    // const handleDragEnd = async (result) => {
+    //     const { destination, source, draggableId } = result;
 
-        const draggedTask = active.data.current.task;
-        const newCategory = over.id;
+    //     // If dropped outside of a droppable area
+    //     if (!destination) return;
 
-        if (draggedTask.category !== newCategory) {
-            editTaskMutation.mutate({
-                id: draggedTask._id,
-                updatedTask: { category: newCategory },
-            });
-        } else {
-            const currentCategoryTasks = tasks.filter(
-                (task) => task.category === draggedTask.category
+    //     // If the task is dropped back at the same position
+    //     if (
+    //         destination.droppableId === source.droppableId &&
+    //         destination.index === source.index
+    //     ) {
+    //         return;
+    //     }
+
+    //     const draggedTask = tasks.find(task => task._id === draggableId);
+
+    //     // Optimistically update the local state
+    //     const updatedTasks = [...tasks];
+
+    //     // Handle case when task is moved between categories
+    //     if (destination.droppableId !== source.droppableId) {
+    //         // Update the category of the dragged task
+    //         draggedTask.category = destination.droppableId;
+
+    //         // Reorder tasks in the source and destination categories
+    //         updatedTasks
+    //             .filter(task => task.category === source.droppableId)
+    //             .sort((a, b) => a.order - b.order);
+    //         updatedTasks
+    //             .filter(task => task.category === destination.droppableId)
+    //             .sort((a, b) => a.order - b.order);
+
+    //         try {
+    //             // Send API request to update task category
+    //             await editTaskMutation.mutateAsync({
+    //                 id: draggedTask._id,
+    //                 updatedTask: { category: destination.droppableId },
+    //             });
+    //         } catch (error) {
+    //             // Revert the optimistic update if mutation fails
+    //             queryClient.setQueryData(["tasks", user.email], tasks);
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Oops...",
+    //                 text: "Something went wrong while updating the task!",
+    //             });
+    //         }
+    //     } else {
+    //         // Handle case when task is reordered within the same category
+    //         const currentCategoryTasks = updatedTasks.filter(
+    //             (task) => task.category === draggedTask.category
+    //         );
+
+    //         // Remove the dragged task from its previous position
+    //         const draggedTaskIndex = currentCategoryTasks.findIndex(
+    //             (task) => task._id === draggedTask._id
+    //         );
+    //         currentCategoryTasks.splice(draggedTaskIndex, 1);
+
+    //         // Insert the dragged task in its new position
+    //         currentCategoryTasks.splice(destination.index, 0, draggedTask);
+
+    //         // Optimistically update order of tasks in the same category
+    //         currentCategoryTasks.forEach((task, index) => {
+    //             task.order = index + 1;
+    //         });
+
+    //         try {
+    //             // Update tasks order in database
+    //             await Promise.all(
+    //                 currentCategoryTasks.map((task) =>
+    //                     editTaskMutation.mutateAsync({
+    //                         id: task._id,
+    //                         updatedTask: { order: task.order },
+    //                     })
+    //                 )
+    //             );
+    //         } catch (error) {
+    //             // Revert optimistic state update if mutation fails
+    //             queryClient.setQueryData(["tasks", user.email], tasks);
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Oops...",
+    //                 text: "Something went wrong while reordering tasks!",
+    //             });
+    //         }
+    //     }
+    // };
+    const handleDragEnd = async (result) => {
+        const { destination, source, draggableId } = result;
+
+        // If dropped outside of a droppable area
+        if (!destination) return;
+
+        // If the task is dropped back at the same position
+        if (
+            destination.droppableId === source.droppableId &&
+            destination.index === source.index
+        ) {
+            return;
+        }
+
+        const draggedTask = tasks.find(task => task._id === draggableId);
+
+        // Optimistically update the local state
+        const updatedTasks = [...tasks];
+
+        // Handle case when task is moved between categories
+        if (destination.droppableId !== source.droppableId) {
+            // Update the category of the dragged task
+            draggedTask.category = destination.droppableId;
+
+            // Reorder tasks in the source category
+            const sourceCategoryTasks = updatedTasks
+                .filter(task => task.category === source.droppableId)
+                .sort((a, b) => a.order - b.order);
+
+            // Reorder tasks in the destination category
+            const destinationCategoryTasks = updatedTasks
+                .filter(task => task.category === destination.droppableId)
+                .sort((a, b) => a.order - b.order);
+
+            // Remove the dragged task from the source category
+            const draggedTaskIndex = sourceCategoryTasks.findIndex(
+                (task) => task._id === draggedTask._id
             );
+            sourceCategoryTasks.splice(draggedTaskIndex, 1);
 
+            // Insert the dragged task into the destination category at the new position
+            destinationCategoryTasks.splice(destination.index, 0, draggedTask);
+
+            // Update the order of tasks in the source category
+            sourceCategoryTasks.forEach((task, index) => {
+                task.order = index + 1;
+            });
+
+            // Update the order of tasks in the destination category
+            destinationCategoryTasks.forEach((task, index) => {
+                task.order = index + 1;
+            });
+
+            try {
+                // Send API requests to update tasks in both categories
+                await Promise.all([
+                    ...sourceCategoryTasks.map((task) =>
+                        editTaskMutation.mutateAsync({
+                            id: task._id,
+                            updatedTask: { order: task.order },
+                        })
+                    ),
+                    ...destinationCategoryTasks.map((task) =>
+                        editTaskMutation.mutateAsync({
+                            id: task._id,
+                            updatedTask: { order: task.order, category: task.category },
+                        })
+                    ),
+                ]);
+            } catch (error) {
+                // Revert the optimistic update if mutation fails
+                queryClient.setQueryData(["tasks", user.email], tasks);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong while updating the task!",
+                });
+            }
+        } else {
+            // Handle case when task is reordered within the same category
+            const currentCategoryTasks = updatedTasks
+                .filter((task) => task.category === draggedTask.category)
+                .sort((a, b) => a.order - b.order);
+
+            // Remove the dragged task from its previous position
             const draggedTaskIndex = currentCategoryTasks.findIndex(
                 (task) => task._id === draggedTask._id
             );
-
             currentCategoryTasks.splice(draggedTaskIndex, 1);
-            const newIndex = currentCategoryTasks.findIndex(
-                (task) => task._id === over.id
-            );
-            currentCategoryTasks.splice(newIndex, 0, draggedTask);
 
+            // Insert the dragged task in its new position
+            currentCategoryTasks.splice(destination.index, 0, draggedTask);
+
+            // Update the order of tasks in the same category
             currentCategoryTasks.forEach((task, index) => {
-                editTaskMutation.mutate({
-                    id: task._id,
-                    updatedTask: { order: index + 1 },
-                });
+                task.order = index + 1;
             });
+
+            try {
+                // Send API requests to update the order of tasks in the same category
+                await Promise.all(
+                    currentCategoryTasks.map((task) =>
+                        editTaskMutation.mutateAsync({
+                            id: task._id,
+                            updatedTask: { order: task.order },
+                        })
+                    )
+                );
+            } catch (error) {
+                // Revert the optimistic update if mutation fails
+                queryClient.setQueryData(["tasks", user.email], tasks);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong while reordering tasks!",
+                });
+            }
         }
     };
-
 
     return (
         <div className="container mx-auto p-6 px-2.5">
@@ -197,7 +366,7 @@ const TaskBoard = () => {
                 </form>
             )}
 
-            <DndContext onDragEnd={handleDragEnd}>
+            <DragDropContext onDragEnd={handleDragEnd}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {categories.map((category) => (
                         <DroppableColumn
@@ -211,7 +380,7 @@ const TaskBoard = () => {
                         />
                     ))}
                 </div>
-            </DndContext>
+            </DragDropContext>
 
             {editingTask && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-2 overflow-y-auto">
