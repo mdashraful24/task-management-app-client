@@ -262,7 +262,7 @@ const TaskBoard = () => {
             <h1 className="text-2xl md:text-4xl font-extrabold text-center mb-7">Task Management Board</h1>
 
             <div className="flex justify-center mb-8">
-                <button onClick={() => setShowForm(!showForm)} className="btn btn-primary">
+                <button onClick={() => setShowForm(!showForm)} className="btn bg-blue-600 hover:bg-blue-700 text-white">
                     {showForm ? "Hide Task Form" : "Add New Task"}
                 </button>
             </div>
@@ -322,7 +322,7 @@ const TaskBoard = () => {
 
             {editingTask && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-2 overflow-y-auto">
-                    <div className="bg-base-300 p-6 rounded-lg shadow-md container mx-auto border">
+                    <div className="bg-base-300 p-4 md:p-6 rounded-lg shadow-md border w-full max-w-2xl mx-auto">
                         <h2 className="text-lg md:text-2xl font-semibold text-center mb-4">Edit Task</h2>
                         <form onSubmit={editHandleSubmit(handleEditTask)}>
                             <label className="block mb-1.2">Title</label>
@@ -353,14 +353,14 @@ const TaskBoard = () => {
                                 <p className="text-red-500 text-sm mb-2">{errors.description.message}</p>
                             )}
                             <div className="flex justify-between">
-                                <button type="submit" className="px-4 py-2 text-white bg-blue-700 rounded-lg">Update</button>
+                                <button type="submit" className="px-4 py-1.5 text-white bg-blue-700 rounded-lg">Update</button>
                                 <button
                                     type="button"
                                     onClick={() => {
                                         setEditingTask(null);
                                         resetEditForm();
                                     }}
-                                    className="px-4 py-2 text-white bg-red-700 rounded-lg"
+                                    className="px-4 py-1.5 text-white bg-red-700 rounded-lg"
                                 >
                                     Cancel
                                 </button>
