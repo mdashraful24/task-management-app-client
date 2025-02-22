@@ -11,8 +11,8 @@ The **Task Management Application** is a full-featured tool that allows users to
 
 ## Live Links
 
-- **Link-1**: [ProTasker](https://taskmanagement-7a430.web.app/)
-- **Link-2**: [ProTasker](https://taskmanagement-7a430.firebaseapp.com/)
+- **Link-1**: [https://taskmanagement-7a430.web.app/](https://taskmanagement-7a430.web.app/)
+- **Link-2**: [https://taskmanagement-7a430.firebaseapp.com/](https://taskmanagement-7a430.firebaseapp.com/)
 
 ## Dependencies
 
