@@ -1,46 +1,48 @@
-import { FaPlusCircle, FaEdit, FaTrash, FaExchangeAlt } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import FetchLogs from "./FetchLogs";
 
-const ActivityLog = ({ logs }) => {
+const ActivityLog = ({ logs, email }) => {
+    const [showLogs, setShowLogs] = useState(false);
+
+    useEffect(() => {
+        if (logs.length > 0 && email) {
+            const lastLog = logs[logs.length - 1];
+
+            fetch("http://localhost:5000/activity-logs", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    message: lastLog.message,
+                    timestamp: lastLog.timestamp,
+                    email,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Log saved:", data);
+                })
+                .catch((error) => {
+                    console.error("Error saving log:", error);
+                });
+        }
+    }, [logs, email]);
+
     return (
         <div className="mt-10">
-            <h2 className="text-2xl font-extrabold mb-4">Activity Log</h2>
-            <div className="bg-base-300 shadow-lg rounded-lg p-6 px-4 border">
-                {logs.length > 0 ? (
-                    <ul className="space-y-4">
-                        {logs.map((log, index) => {
-                            let icon;
-                            // let iconColor = "text-gray-500";
+            <button
+                onClick={() => setShowLogs(!showLogs)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            >
+                {showLogs ? "Hide Activity Logs" : "Show Activity Logs"}
+            </button>
 
-                            if (log.message.includes("created")) {
-                                icon = <FaPlusCircle className="text-green-500" />;
-                            } else if (log.message.includes("updated")) {
-                                icon = <FaEdit className="text-yellow-500" />;
-                            } else if (log.message.includes("deleted")) {
-                                icon = <FaTrash className="text-red-500" />;
-                            } else if (log.message.includes("moved")) {
-                                icon = <FaExchangeAlt className="text-blue-500" />;
-                            }
-
-                            return (
-                                <li
-                                    key={index}
-                                    className="flex items-start space-x-3 p-3 border-b border-gray-200 bg-base-100 rounded-lg shadow-sm transition-all duration-300 hover:bg-base-300 hover:border-black"
-                                >
-                                    <div className="text-xl">{icon}</div>
-                                    <div className="flex-1">
-                                        <p className="text-sm font-medium">{log.message}</p>
-                                        <p className="text-xs bg-base-300 px-2 py-1 rounded-lg inline-block mt-1">
-                                            {log.timestamp}
-                                        </p>
-                                    </div>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                ) : (
-                    <p className="text-center">No activity recorded yet.</p>
-                )}
-            </div>
+            {showLogs && (
+                <div className="mt-6">
+                    <FetchLogs email={email} />
+                </div>
+            )}
         </div>
     );
 };

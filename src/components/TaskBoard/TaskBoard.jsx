@@ -437,7 +437,8 @@ const TaskBoard = () => {
             )}
 
             {/* Activity Log Section */}
-            {activityLog.length > 0 && <ActivityLog logs={activityLog} />}
+            {/* {activityLog.length > 0 && <ActivityLog logs={activityLog} />} */}
+            <ActivityLog logs={activityLog} email={user.email} />
         </div>
     );
 };

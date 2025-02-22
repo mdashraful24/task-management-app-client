@@ -17,7 +17,7 @@
     "@hello-pangea/dnd": "^18.0.1",
     "@react-spring/web": "^9.7.5",
     "@smastrom/react-rating": "^1.5.0",
-    "@tanstack/react-query": "^5.64.1",
+    "@tanstack/react-query": "^5.66.9",
     "aos": "^2.3.4",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
