@@ -10,8 +10,8 @@ The **Task Management Application** is a full-featured tool that allows users to
 
 ## Live Links
 
-- **Link-1**: [https://taskmanagement-7a430.web.app/](https://taskmanagement-7a430.web.app/)
-- **Link-2**: [https://taskmanagement-7a430.firebaseapp.com/](https://taskmanagement-7a430.firebaseapp.com/)
+- **Link-1**: [ProTasker](https://taskmanagement-7a430.web.app/)
+- **Link-2**: [ProTasker](https://taskmanagement-7a430.firebaseapp.com/)
 
 ## Dependencies
 
@@ -31,7 +31,6 @@ The **Task Management Application** is a full-featured tool that allows users to
 - `express`: Web framework for Node.js.
 - `mongoose`: MongoDB ODM for interacting with the MongoDB Atlas database.
 - `firebase-admin`: Firebase Admin SDK for backend authentication.
-- `socket.io`: For real-time communication with the frontend.
 - `dotenv`: To manage environment variables.
 
 ## Installation Steps
@@ -101,7 +100,7 @@ VITE_appId=your-firebase-app-id
 
 ```bash
 cd backend
-npm run dev
+nodemon index.js
 ```
 
 - To run the frontend:
