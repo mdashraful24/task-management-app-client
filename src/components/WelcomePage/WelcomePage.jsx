@@ -14,7 +14,7 @@ const WelcomePage = () => {
         <div
             className={`flex items-center justify-center h-screen ${theme === "dark"
                     ? "bg-gray-900 text-white"
-                    : "bg-gradient-to-r from-blue-600 to-blue-500 text-white"
+                    : "bg-gradient-to-r from-gray-500 to-blue-600 text-white"
                 }`}
         >
             <div className="px-3">

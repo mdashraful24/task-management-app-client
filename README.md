@@ -1,138 +1,159 @@
-Great! I'll update the `README.md` file to reflect that you're using MongoDB Atlas.
-
-Here is the updated `README.md`:
-
 # Task Management Application
 
-## Short Description
+**Task Management Application** is a modern, responsive, and user-friendly task management tool built with **React**, **Express.js**, and **MongoDB**. It allows users to organize tasks into three categories: **To-Do**, **In Progress**, and **Done**. The app features a drag-and-drop interface, real-time database synchronization, and Firebase authentication for secure access.
 
-The **Task Management Application** is a full-featured tool that allows users to manage their tasks with ease. It includes functionality to add, edit, delete, reorder, and categorize tasks using a drag-and-drop interface. Tasks are categorized into **To-Do**, **In Progress**, and **Done**. The application supports real-time synchronization using MongoDB Atlas and Firebase Authentication, ensuring data is saved instantly and remains persistent across sessions.
+🚀 **Live Demo:** [https://taskmanagement-7a430.web.app/]
 
-## Live Links
+---
 
-- **Link-1**: [ProTasker](https://taskmanagement-7a430.web.app/)
-- **Link-2**: [ProTasker](https://taskmanagement-7a430.firebaseapp.com/)
+## 📖 Table of Contents
 
-## Dependencies
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Installation](#installation)
+- [Configuration (.env)](#configuration-env)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Bonus Features](#bonus-features)
+- [Acknowledgments](#acknowledgments)
 
-### Frontend
+---
 
-- `@dnd-kit/accessibility`: Accessibility features for drag-and-drop functionality.
-- `@dnd-kit/sortable`: Sortable elements for drag-and-drop.
-- `firebase`: Firebase for authentication and real-time sync.
-- `react-router-dom`: For routing in the React application.
-- `axios`: For HTTP requests to the backend.
-- `tailwindcss`: Utility-first CSS framework for styling.
-- `react-icons`: For icons used throughout the app.
-- `react-toastify`: For user notifications.
+## ✨ Features
 
-### Backend
+- **Authentication** – Secure login using **Firebase Authentication** (Google Sign-In).
+- **Task Management** – Add, edit, delete, and reorder tasks with a drag-and-drop interface.
+- **Task Categories** – Organize tasks into **To-Do**, **In Progress**, and **Done**.
+- **Real-Time Sync** – Instant database updates using **MongoDB Change Streams** or **WebSockets**.
+- **Responsive Design** – Fully responsive UI for desktop and mobile devices.
+- **Clean UI** – Minimalistic design with a maximum of four colors for a professional look.
+- **Persistence** – Tasks are saved in the database and persist across sessions.
 
-- `express`: Web framework for Node.js.
-- `mongoose`: MongoDB ODM for interacting with the MongoDB Atlas database.
-- `firebase-admin`: Firebase Admin SDK for backend authentication.
-- `dotenv`: To manage environment variables.
+---
 
-## Installation Steps
+## 🛠️ Technology Stack
 
-Follow these steps to get the application up and running on your local machine:
+| Category           | Technologies Used                                                 |
+| ------------------ | ----------------------------------------------------------------- |
+| **Frontend**       | React, Vite.js, Tailwind CSS, @hello-pangea/dnd (drag-and-drop) |
+| **Backend**        | Node.js, Express.js                                               |
+| **Database**       | MongoDB (Atlas)                                          |
+| **Authentication** | Firebase Authentication                                           |                             |
+| **Hosting**        | Firebase (Frontend), Vercel (Backend), MongoDB Atlas (Database)             |
 
-### 1. Clone the Repository
+---
 
-```bash
-git clone https://github.com/yourusername/task-management-app.git
-cd task-management-app
-```
+## 🛠 Installation
 
-### 2. Set Up the Backend
+### Prerequisites
 
-- Navigate to the backend directory:
+- **Node.js** (>= 18)
+- **MongoDB Atlas**
+- **Firebase Project** (for authentication)
 
-```bash
-cd backend
-```
+### Steps
 
-- Install backend dependencies:
+1. **Clone the repository**
 
-```bash
-npm install
-```
+   ```sh
+   git clone https://github.com/mdashraful24/task-management-app-server.git
+   cd task-management-app
+   ```
 
-- Set up your environment variables:
+2. **Install dependencies**
 
-Create a `.env` file in the backend directory and add the following:
+   ```sh
+   npm install
+   cd client
+   npm install
+   ```
+
+3. **Set up environment variables** (see `.env` example below)
+
+4. **Run the development server**
+
+   - Backend:
+     ```sh
+     npm run dev
+     ```
+   - Frontend:
+     ```sh
+     cd client
+     npm run dev
+     ```
+
+---
+
+## ⚙️ Configuration (.env)
+
+Create a `.env` file in the root directory and configure the following:
 
 ```env
-MONGO_URI=your-mongodb-atlas-uri
-FIREBASE_SERVICE_ACCOUNT_KEY=your-firebase-service-account-key
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY
+VITE_FIREBASE_AUTH_DOMAIN=YOUR_FIREBASE_AUTH_DOMAIN
+VITE_FIREBASE_PROJECT_ID=YOUR_FIREBASE_PROJECT_ID
+VITE_FIREBASE_STORAGE_BUCKET=YOUR_FIREBASE_STORAGE_BUCKET
+VITE_FIREBASE_MESSAGING_SENDER_ID=YOUR_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID=YOUR_FIREBASE_APP_ID
+
+# MongoDB Configuration
+MONGO_URI=YOUR_MONGODB_URI
+
+# Server Configuration
+PORT=5000
 ```
 
-### 3. Set Up the Frontend
+🚨 **Important:** Never expose your `.env` file in public repositories. Use `.gitignore` to keep it secure.
 
-- Navigate to the frontend directory:
+---
 
-```bash
-cd frontend
-```
+## 🚀 Usage
 
-- Install frontend dependencies:
+1. **Sign In** – Use Google Sign-In to authenticate.
+2. **Add Tasks** – Create tasks with a title and optional description.
+3. **Drag & Drop** – Move tasks between **To-Do**, **In Progress**, and **Done**.
+4. **Edit & Delete** – Update or remove tasks as needed.
+5. **Real-Time Updates** – Changes are saved instantly and persist across sessions.
 
-```bash
-npm install
-```
+---
 
-- Set up your environment variables:
+## 📄 API Endpoints
 
-Create a `.env` file in the frontend directory and add the following:
+| Method | Endpoint        | Description                          |
+| ------ | --------------- | ------------------------------------ |
+| POST   | `/tasks`        | Add a new task                       |
+| GET    | `/tasks`        | Retrieve all tasks for the user      |
+| PUT    | `/tasks/:id`    | Update a task (title, description, category) |
+| DELETE | `/tasks/:id`    | Delete a task                        |
 
-```env
-VITE_apiKey=your-firebase-api-key
-VITE_authDomain=your-firebase-auth-domain
-VITE_projectId=your-firebase-project-id
-VITE_storageBucket=your-firebase-storage-bucket
-VITE_messagingSenderId=your-firebase-messaging-sender-id
-VITE_appId=your-firebase-app-id
-```
+---
 
-### 4. Run the Application
+## 🎁 Others Features
 
-- To run the backend:
+- **Dark Mode** – Toggle between light and dark themes.
+- **Task Due Dates** – Add due dates with color indicators (e.g., overdue tasks turn red).
+- **Activity Log** – Track changes like "Task moved to Done".
 
-```bash
-cd backend
-nodemon index.js
-```
+---
 
-- To run the frontend:
+## Acknowledgments
 
-```bash
-cd frontend
-npm run dev
-```
+- **Firebase** for providing secure authentication.
+- **MongoDB** for real-time database synchronization.
+- **React** and **Vite.js** for a fast and modern frontend.
+- **Tailwind CSS** for a clean and responsive design.
+- **hello-pangea/dnd** for the drag-and-drop functionality.
 
-The application should now be live on `http://localhost:3000`.
+---
 
-## Technologies Used
+## 🌍 Live Demo
 
-### Frontend
+You can view the live version of the **Task Management Application** at the following link:
 
-- **React.js**: For building user interfaces.
-- **Vite.js**: Build tool that provides fast development and optimized production builds.
-- **Tailwind CSS**: Utility-first CSS framework for styling.
-- **Firebase Authentication**: For user authentication via Google sign-in.
-- **Drag-and-Drop Library**: For implementing the drag-and-drop functionality.
-- **Axios**: For making HTTP requests to the backend.
+- **Live Site 1:** [https://taskmanagement-7a430.web.app/]
+- **Live Site 2:** [https://taskmanagement-7a430.firebaseapp.com/]
 
-### Backend
+🚀 **Organize your tasks efficiently with this modern task management tool!** 📋✨
 
-- **Node.js**: JavaScript runtime for the backend server.
-- **Express.js**: Web framework for building the RESTful API.
-- **MongoDB Atlas**: Cloud-based MongoDB service for storing tasks.
-- **Firebase**: For managing authentication and other Firebase services on the server side.
-
-## Contact
-
-For any inquiries, contact me at:
-
-- **Email**: mdashrafulislam2882@gmail.com
-- **GitHub**: [https://github.com/mdashraful24](https://github.com/mdashraful24)
+---
