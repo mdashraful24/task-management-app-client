@@ -2,7 +2,6 @@ Great! I'll update the `README.md` file to reflect that you're using MongoDB Atl
 
 Here is the updated `README.md`:
 
-```markdown
 # Task Management Application
 
 ## Short Description
@@ -138,4 +137,3 @@ For any inquiries, contact me at:
 
 - **Email**: mdashrafulislam2882@gmail.com
 - **GitHub**: [https://github.com/mdashraful24](https://github.com/mdashraful24)
-```
