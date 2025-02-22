@@ -139,5 +139,3 @@ For any inquiries, contact me at:
 - **Email**: mdashrafulislam2882@gmail.com
 - **GitHub**: [https://github.com/mdashraful24](https://github.com/mdashraful24)
 ```
-
-I've updated the `README.md` to include MongoDB Atlas as the database provider. Let me know if you need any more adjustments!
