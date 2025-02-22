@@ -8,6 +8,7 @@ import DroppableColumn from "../DroppableColumn/DroppableColumn";
 import useAuth from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import ActivityLog from "../ActivityLog/ActivityLog";
+import WelcomePage from "../WelcomePage/WelcomePage";
 
 const categories = ["To-Do", "In Progress", "Done"];
 
@@ -26,8 +27,8 @@ const TaskBoard = () => {
 
     if (!user) {
         return (
-            <div className="flex min-h-screen justify-center items-center text-center">
-                <p className="text-xl font-bold">You must be logged in to view and manage tasks.</p>
+            <div>
+                <WelcomePage />
             </div>
         );
     }
@@ -450,7 +451,7 @@ export default TaskBoard;
 //
 
 
-// 
+//
 
 
 // Reserve

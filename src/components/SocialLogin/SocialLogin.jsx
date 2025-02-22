@@ -14,17 +14,16 @@ const SocialLogin = () => {
     const handleGoogleSignIn = () => {
         googleSignIn()
             .then((result) => {
-                // console.log(result.user);
                 const userInfo = {
-                    id: result.user?.uid,  // User ID
-                    email: result.user?.email,  // Email
-                    name: result.user?.displayName  // Display Name
+                    id: result.user?.uid,
+                    email: result.user?.email,
+                    name: result.user?.displayName
                 };
-                // console.log(userInfo);
+                toast.success("Successfully Signed In with Google", {
+                    position: "top-right",
+                });
                 axiosPublic.post('/users', userInfo)
                     .then(res => {
-                        // console.log(res.data);
-                        toast.success("Successfully Signed In with Google");
                         navigate(from, { replace: true });
                     })
                     .catch(error => {
@@ -38,7 +37,7 @@ const SocialLogin = () => {
         <div className="text-center">
             <button
                 onClick={handleGoogleSignIn}
-                className="btn btn-sm bg-blue-900 hover:bg-blue-950 text-white hover:dark:text-white border-none"
+                className="btn btn-sm bg-blue-300 hover:bg-blue-400 md:text-base text-black border-none"
             >
                 Sign In
             </button>

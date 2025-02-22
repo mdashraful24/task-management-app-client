@@ -8,7 +8,7 @@ const ActivityLog = ({ logs, email }) => {
         if (logs.length > 0 && email) {
             const lastLog = logs[logs.length - 1];
 
-            fetch("http://localhost:5000/activity-logs", {
+            fetch("https://task-management-app-server-eta.vercel.app/activity-logs", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -21,7 +21,7 @@ const ActivityLog = ({ logs, email }) => {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log("Log saved:", data);
+                    // console.log("Log saved:", data);
                 })
                 .catch((error) => {
                     console.error("Error saving log:", error);
