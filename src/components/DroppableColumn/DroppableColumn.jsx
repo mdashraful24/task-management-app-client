@@ -6,10 +6,9 @@ const DroppableColumn = ({ category, tasks, onDelete, onEdit }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate a delay to fetch tasks
         const timer = setTimeout(() => {
             setLoading(false);
-        }, 500); // Adjust delay as needed
+        }, 500);
 
         return () => clearTimeout(timer);
     }, [tasks]);
