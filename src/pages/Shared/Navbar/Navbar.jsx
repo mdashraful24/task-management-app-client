@@ -1,7 +1,6 @@
-import logo from '../../../assets/logo.png';
 import alt from '../../../assets/auth/profile.png';
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import DarkMode from '../DarkMode/DarkMode';
@@ -63,7 +62,7 @@ const Navbar = () => {
     );
 
     return (
-        <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-600 to-blue-500 shadow-lg">
+        <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-600 to-blue-500 shadow-lg px-1">
             <div className="navbar container mx-auto">
                 <div className="navbar-start">
                     <div className="dropdown">
@@ -103,8 +102,7 @@ const Navbar = () => {
                             onClick={scrollToHome}
                             className="flex items-center gap-2"
                         >
-                            {/* <img src={logo} alt="siteLogo" className="w-8 md:w-12" /> */}
-                            <h2 className="text-2xl md:text-3xl font-extrabold text-white">TaskFlow</h2>
+                            <h2 className="text-2xl md:text-3xl font-extrabold text-white">ProTasker</h2>
                         </button>
                     </div>
                 </div>
@@ -117,7 +115,7 @@ const Navbar = () => {
                     {user ? (
                         <div className="relative dropdown-container" ref={profileDropdownRef}>
                             <img
-                                className="rounded-full w-12 h-12 object-cover cursor-pointer hover:bg-gray-300 p-1"
+                                className="rounded-full w-10 h-10 object-cover cursor-pointer hover:bg-gray-300 p-1"
                                 src={user?.photoURL || alt}
                                 alt="User profile"
                                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
@@ -143,12 +141,6 @@ const Navbar = () => {
                             )}
                         </div>
                     ) : (
-                        // <Link
-                        //     to="/login"
-                        //         className="btn btn-sm bg-blue-900 hover:bg-blue-950 text-white hover:dark:text-white border-none"
-                        // >
-                        //     Sign In
-                        // </Link>
                         <SocialLogin></SocialLogin>
                     )}
                 </div>
