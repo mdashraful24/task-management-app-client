@@ -20,16 +20,22 @@ const TaskCard = ({ task, onDelete, onEdit, index }) => {
                 >
                     <div>
                         <div>
-                            <h3 className="text-lg font-bold text-justify mb-3">{task.title}</h3> {/** truncate,  line-clamp-2 */}
+                            <h3 className="text-lg font-bold text-justify mb-2">{task.title}</h3> {/** truncate,  line-clamp-2 */}
                             {task.description && (
-                                <p className="text-sm text-justify mb-6">{task.description}</p>
+                                <p className="text-justify mb-6"><span className="text-lg font-bold">"</span>{task.description}<span className="text-lg font-bold">"</span></p>
                             )}
-                            <div className="mt-2 flex flex-wrap justify-between gap-2 text-xs">
+                            <div className="mt-2 flex flex-wrap justify-between gap-2 text-sm">
                                 <span><strong>Created:</strong> {format(createdAt, "MMM d, yyyy, HH:mm:ss")}</span>
                                 <span><strong>Updated:</strong> {format(updatedAt, "MMM d, yyyy, HH:mm:ss")}</span>
+                                {/* {task.dueDate && (
+                                    <span className={isOverdue ? "text-red-600 font-medium" : "text-blue-600"}>
+                                        <strong>Overdue:</strong> {format(dueDate, "MMM d, yyyy, HH:mm:ss")}
+                                    </span>
+                                )} */}
                                 {task.dueDate && (
-                                    <span className={isOverdue ? "text-red-600 font-medium" : "text-gray-500"}>
-                                        Due: {format(dueDate, "MMM d, yyyy, HH:mm:ss")}
+                                    <span className={isOverdue ? "text-red-600 font-medium" : "text-blue-600"}>
+                                        <strong>{isOverdue ? "Overdue:" : "Due:"}</strong>{" "}
+                                        {format(dueDate, "MMM d, yyyy, HH:mm:ss")}
                                     </span>
                                 )}
                             </div>
