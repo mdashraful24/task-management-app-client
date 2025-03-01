@@ -1,5 +1,5 @@
 {
-  "name": "mw-assignments12-client",
+  "name": "task-management-app-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -30,6 +30,7 @@
     "motion": "^12.4.4",
     "react": "^18.3.1",
     "react-awesome-reveal": "^4.3.1",
+    "react-datepicker": "^8.1.0",
     "react-dnd": "^16.0.1",
     "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.5",

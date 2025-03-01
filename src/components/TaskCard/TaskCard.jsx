@@ -27,11 +27,6 @@ const TaskCard = ({ task, onDelete, onEdit, index }) => {
                             <div className="mt-2 flex flex-wrap justify-between gap-2 text-sm">
                                 <span><strong>Created:</strong> {format(createdAt, "MMM d, yyyy, HH:mm:ss")}</span>
                                 <span><strong>Updated:</strong> {format(updatedAt, "MMM d, yyyy, HH:mm:ss")}</span>
-                                {/* {task.dueDate && (
-                                    <span className={isOverdue ? "text-red-600 font-medium" : "text-blue-600"}>
-                                        <strong>Overdue:</strong> {format(dueDate, "MMM d, yyyy, HH:mm:ss")}
-                                    </span>
-                                )} */}
                                 {task.dueDate && (
                                     <span className={isOverdue ? "text-red-600 font-medium" : "text-blue-600"}>
                                         <strong>{isOverdue ? "Overdue:" : "Due:"}</strong>{" "}
