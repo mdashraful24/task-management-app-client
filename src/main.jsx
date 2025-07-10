@@ -29,5 +29,5 @@ createRoot(document.getElementById('root')).render(
         </QueryClientProvider>
       </AuthProvider>
     </HelmetProvider>
-  </StrictMode>,
+  </StrictMode>
 )
