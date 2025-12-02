@@ -1,41 +1,33 @@
 import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import FetchLogs from "./FetchLogs";
-import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const ActivityLog = ({ logs, email }) => {
-    const axiosPublic = useAxiosPublic();
     const [showLogs, setShowLogs] = useState(false);
-
-    // Define the mutation for posting logs
-    const postLogMutation = useMutation({
-        mutationFn: async (logData) => {
-            const response = await axiosPublic.post("/activity-logs", logData);
-            return response.data;
-        },
-        onSuccess: (data) => {
-            // console.log("Log saved:", data);
-        },
-        onError: (error) => {
-            console.error("Error saving log:", error);
-        },
-    });
 
     useEffect(() => {
         if (logs.length > 0 && email) {
             const lastLog = logs[logs.length - 1];
 
-            // Prepare the data to post
-            const logData = {
-                message: lastLog.message,
-                timestamp: lastLog.timestamp,
-                email,
-            };
-
-            // Use the mutation to post the log
-            postLogMutation.mutate(logData);
+            fetch("http://localhost:5000/activity-logs", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    message: lastLog.message,
+                    timestamp: lastLog.timestamp,
+                    email,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // console.log("Log saved:", data);
+                })
+                .catch((error) => {
+                    console.error("Error saving log:", error);
+                });
         }
-    }, [logs, email]); // Add postLogMutation to dependencies if your linter requires it
+    }, [logs, email]);
 
     return (
         <div className="mt-10">
