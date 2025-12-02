@@ -16,23 +16,6 @@ const TaskBoard = () => {
     const { user, loading } = useAuth();
     const axiosPublic = useAxiosPublic();
     const queryClient = useQueryClient();
-
-    if (loading) {
-        return (
-            <div className="flex min-h-screen justify-center items-center">
-                <div className="text-blue-700 loading loading-infinity loading-lg"></div>
-            </div>
-        );
-    }
-
-    if (!user) {
-        return (
-            <div>
-                <WelcomePage />
-            </div>
-        );
-    }
-
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { register: editRegister, handleSubmit: editHandleSubmit, setValue, reset: resetEditForm } = useForm();
 
@@ -40,18 +23,21 @@ const TaskBoard = () => {
     const [showForm, setShowForm] = useState(false);
     const [activityLog, setActivityLog] = useState([]);
 
+    // Move all hooks to the top, before any conditionals
     const { data: tasks = [], isLoading, isError } = useQuery({
-        queryKey: ["tasks", user.email],
+        queryKey: ["tasks", user?.email],
         queryFn: async () => {
+            if (!user?.email) return []; // Early return if no user
             const response = await axiosPublic.get(`/tasks/${user.email}`);
             return response.data;
         },
+        enabled: !!user?.email, // Only run query if user exists
     });
 
     const addTaskMutation = useMutation({
         mutationFn: (newTask) => axiosPublic.post("/tasks", newTask),
         onSuccess: () => {
-            queryClient.invalidateQueries(["tasks"]);
+            queryClient.invalidateQueries(["tasks", user?.email]);
             reset();
             setShowForm(false);
             toast.success("Task added successfully", {
@@ -63,7 +49,7 @@ const TaskBoard = () => {
     const editTaskMutation = useMutation({
         mutationFn: ({ id, updatedTask }) => axiosPublic.patch(`/tasks/${id}`, updatedTask),
         onSuccess: () => {
-            queryClient.invalidateQueries(["tasks"]);
+            queryClient.invalidateQueries(["tasks", user?.email]);
             setEditingTask(null);
             resetEditForm();
         },
@@ -72,16 +58,30 @@ const TaskBoard = () => {
     const deleteTaskMutation = useMutation({
         mutationFn: (taskId) => axiosPublic.delete(`/tasks/${taskId}`),
         onSuccess: () => {
-            queryClient.invalidateQueries(["tasks"]);
+            queryClient.invalidateQueries(["tasks", user?.email]);
         },
     });
 
+    // Helper functions
     const handleOpenEditForm = (task) => {
         setEditingTask(task);
-        setValue("title", task.title);
-        setValue("description", task.description);
-        setValue("category", task.category);
-        setValue("dueDate", task.dueDate.split("T")[0]);
+        setValue("title", task.title || "");
+        setValue("description", task.description || "");
+        setValue("category", task.category || "To-Do");
+
+        // Safe handling of dueDate
+        if (task.dueDate && typeof task.dueDate === 'string') {
+            // Check if it already contains 'T' (ISO format)
+            if (task.dueDate.includes('T')) {
+                setValue("dueDate", task.dueDate.split("T")[0]);
+            } else {
+                // If it's already in YYYY-MM-DD format
+                setValue("dueDate", task.dueDate);
+            }
+        } else {
+            // Set to empty string if no dueDate
+            setValue("dueDate", "");
+        }
     };
 
     const handleAddTask = async (newTask) => {
@@ -96,7 +96,7 @@ const TaskBoard = () => {
             order: tasks.length + 1,
             category: newTask.category || "To-Do",
             updatedAt: new Date().toISOString(),
-            dueDate: newTask.dueDate,
+            dueDate: newTask.dueDate || new Date().toISOString().split("T")[0],
         };
 
         setActivityLog((prevLog) => [
@@ -115,11 +115,16 @@ const TaskBoard = () => {
             return;
         }
 
+        if (!editingTask) {
+            toast.error("No task selected for editing", { position: "top-right" });
+            return;
+        }
+
         if (
             updatedTask.title === editingTask.title &&
             updatedTask.description === editingTask.description &&
             updatedTask.category === editingTask.category &&
-            updatedTask.dueDate === editingTask.dueDate
+            updatedTask.dueDate === (editingTask.dueDate ? editingTask.dueDate.split("T")[0] : "")
         ) {
             toast.error("No changes made to the task.", { position: "top-right" });
             return;
@@ -139,7 +144,7 @@ const TaskBoard = () => {
                 updatedTask: {
                     ...updatedTask,
                     updatedAt: new Date().toISOString(),
-                    dueDate: updatedTask.dueDate,
+                    dueDate: updatedTask.dueDate || new Date().toISOString().split("T")[0],
                 },
             },
             {
@@ -152,11 +157,11 @@ const TaskBoard = () => {
         );
     };
 
-
     const handleDeleteTask = async (taskId) => {
+        const taskToDelete = tasks.find(task => task._id === taskId);
         const result = await Swal.fire({
             title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            text: `You're about to delete "${taskToDelete?.title || 'this task'}"!`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -168,7 +173,7 @@ const TaskBoard = () => {
             setActivityLog((prevLog) => [
                 ...prevLog,
                 {
-                    message: `Task "${taskId}" deleted`,
+                    message: `Task "${taskToDelete?.title || taskId}" deleted`,
                     timestamp: new Date().toLocaleString(),
                 },
             ]);
@@ -193,6 +198,8 @@ const TaskBoard = () => {
         if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
         const draggedTask = tasks.find(task => task._id === draggableId);
+        if (!draggedTask) return;
+
         const updatedTasks = [...tasks];
 
         if (destination.droppableId !== source.droppableId) {
@@ -234,6 +241,23 @@ const TaskBoard = () => {
             Swal.fire({ icon: "error", title: "Oops...", text: "Error updating task!" });
         }
     };
+
+    // Now handle loading and authentication states
+    if (loading) {
+        return (
+            <div className="flex min-h-screen justify-center items-center">
+                <div className="text-blue-700 loading loading-infinity loading-lg"></div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div>
+                <WelcomePage />
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto p-6 px-2.5 mb-10">
