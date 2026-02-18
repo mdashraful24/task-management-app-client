@@ -8,7 +8,7 @@ const ActivityLog = ({ logs, email }) => {
         if (logs.length > 0 && email) {
             const lastLog = logs[logs.length - 1];
 
-            fetch("http://localhost:5000/activity-logs", {
+            fetch(`${import.meta.env.VITE_API_URL}/activity-logs`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
